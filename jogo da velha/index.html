@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Velha</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa; 
+        }
+        .jogadores {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .divCaixaPrincipal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .divColuna {
+            display: flex;
+        }
+        .divColuna div {
+            width: 150px; 
+            height: 150px; 
+            border: 4px solid #000000; 
+            text-align: center;
+            font-size: 80px; 
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #00bfff; 
+            transition: background-color 0.3s;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            display: none; 
+        }
+        .vitoria {
+            font-size: 20px;
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jogadores">Jogador 1: X | Jogador 2: O</div>
+    <div class="vitoria">Vitórias - X: <span id="vitoriasX">0</span> | O: <span id="vitoriasO">0</span></div>
+    <div class="divCaixaPrincipal">
+        <div class="divColuna">
+            <div id="campo1" onclick="marcar(1)"></div>
+            <div id="campo2" onclick="marcar(2)"></div>
+            <div id="campo3" onclick="marcar(3)"></div>
+        </div>
+        <div class="divColuna">
+            <div id="campo4" onclick="marcar(4)"></div>
+            <div id="campo5" onclick="marcar(5)"></div>
+            <div id="campo6" onclick="marcar(6)"></div>
+        </div>
+        <div class="divColuna">
+            <div id="campo7" onclick="marcar(7)"></div>
+            <div id="campo8" onclick="marcar(8)"></div>
+            <div id="campo9" onclick="marcar(9)"></div>
+        </div>
+    </div>
+    <button id="resetButton" onclick="resetar()">Reiniciar Jogo</button>
+
+    <script>
+        let jogadorAtual = 'X';
+        let ganhou = false;
+        let vitoriasX = 0;
+        let vitoriasO = 0;
+
+        function marcar(campo) {
+            if (ganhou) return;
+
+            const celula = document.getElementById('campo' + campo);
+            if (celula.textContent === '') {
+                celula.textContent = jogadorAtual;
+                if (verificarVitoria()) {
+                    ganhou = true;
+                    mostrarVencedor();
+                    atualizarContador();
+                } else {
+                    jogadorAtual = (jogadorAtual === 'X') ? 'O' : 'X';
+                }
+            }
+        }
+
+        function verificarVitoria() {
+            // Verificando linhas
+            for (let i = 1; i <= 3; i++) {
+                if (document.getElementById('campo' + i).textContent === jogadorAtual &&
+                    document.getElementById('campo' + (i + 3)).textContent === jogadorAtual &&
+                    document.getElementById('campo' + (i + 6)).textContent === jogadorAtual) {
+                    return true;
+                }
+            }
+            // Verificando colunas
+            for (let i = 1; i <= 3; i++) {
+                if (document.getElementById('campo' + (i * 3 - 2)).textContent === jogadorAtual &&
+                    document.getElementById('campo' + (i * 3 - 1)).textContent === jogadorAtual &&
+                    document.getElementById('campo' + (i * 3)).textContent === jogadorAtual) {
+                    return true;
+                }
+            }
+            // Verificando diagonais
+            if (document.getElementById('campo1').textContent === jogadorAtual &&
+                document.getElementById('campo5').textContent === jogadorAtual &&
+                document.getElementById('campo9').textContent === jogadorAtual) {
+                return true;
+            }
+            if (document.getElementById('campo3').textContent === jogadorAtual &&
+                document.getElementById('campo5').textContent === jogadorAtual &&
+                document.getElementById('campo7').textContent === jogadorAtual) {
+                return true;
+            }
+            return false;
+        }
+
+        function mostrarVencedor() {
+            const campos = document.querySelectorAll('.divColuna div');
+            for (let campo of campos) {
+                if (campo.textContent === jogadorAtual) {
+                    campo.style.backgroundColor = '#0033cc'; 
+                }
+            }
+            document.getElementById('resetButton').style.display = 'block'; 
+        }
+
+        function atualizarContador() {
+            if (jogadorAtual === 'X') {
+                vitoriasX++;
+                document.getElementById('vitoriasX').textContent = vitoriasX;
+            } else {
+                vitoriasO++;
+                document.getElementById('vitoriasO').textContent = vitoriasO;
+            }
+        }
+
+        function resetar() {
+            const campos = document.querySelectorAll('.divColuna div');
+            for (let campo of campos) {
+                campo.textContent = '';
+                campo.style.backgroundColor = '#00bfff'; 
+            }
+            jogadorAtual = 'X';
+            ganhou = false;
+            document.getElementById('resetButton').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
